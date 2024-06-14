@@ -1,0 +1,8 @@
+﻿name: 'ailiaVoiceFFI'
+description: 'Written for the FFI article'
+output: 'lib/ffi/ailia_voice.dart'
+headers:
+  entry-points:
+    - 'native/ailia_voice.h'
+llvm-path:
+  - '/usr/local/opt/llvm@15'
