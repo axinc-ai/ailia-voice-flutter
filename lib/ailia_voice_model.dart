@@ -3,7 +3,7 @@
 import 'dart:ffi' as ffi;
 import 'dart:io';
 import 'package:ffi/ffi.dart'; // malloc
-import 'package:ailia_insight/ffi/ailia_voice.dart' as ailia_voice_dart;
+import 'package:ailia_voice/ailia_voice.dart' as ailia_voice_dart;
 
 String _ailiaCommonGetPath() {
   if (Platform.isAndroid || Platform.isLinux) {
