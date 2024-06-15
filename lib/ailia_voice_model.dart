@@ -261,34 +261,61 @@ class AiliaVoiceModel {
     );
     throwError("ailiaVoiceCreate", status);
 
-    status = ailiaVoice.ailiaVoiceOpenDictionaryFileA(
-      ppAilia!.value,
-      dicFolder.toNativeUtf8().cast<ffi.Char>(),
-      ailia_voice_dart.AILIA_VOICE_DICTIONARY_TYPE_OPEN_JTALK,
-    );
-    throwError("ailiaVoiceOpenDictionaryFileA", status);
+    if (Platform.isWindows){
+      status = ailiaVoice.ailiaVoiceOpenDictionaryFileW(
+        ppAilia!.value,
+        dicFolder.toNativeUtf16().cast<ffi.WChar>(),
+        ailia_voice_dart.AILIA_VOICE_DICTIONARY_TYPE_OPEN_JTALK,
+      );
+    }else{
+      status = ailiaVoice.ailiaVoiceOpenDictionaryFileA(
+        ppAilia!.value,
+        dicFolder.toNativeUtf8().cast<ffi.Char>(),
+        ailia_voice_dart.AILIA_VOICE_DICTIONARY_TYPE_OPEN_JTALK,
+      );
+    }
+    throwError("ailiaVoiceOpenDictionaryFile", status);
 
-    status = ailiaVoice.ailiaVoiceOpenModelFileA(
-      ppAilia!.value,
-      encoder.toNativeUtf8().cast<ffi.Char>(),
-      decoder1.toNativeUtf8().cast<ffi.Char>(),
-      decoder2.toNativeUtf8().cast<ffi.Char>(),
-      wave.toNativeUtf8().cast<ffi.Char>(),
-      (ssl != null) ? ssl.toNativeUtf8().cast<ffi.Char>():ffi.nullptr,
-      modelType,
-      ailia_voice_dart.AILIA_VOICE_CLEANER_TYPE_BASIC,
-    );
-    throwError("ailiaVoiceOpenModelFileA", status);
+    if (Platform.isWindows){
+      status = ailiaVoice.ailiaVoiceOpenModelFileW(
+        ppAilia!.value,
+        encoder.toNativeUtf16().cast<ffi.WChar>(),
+        decoder1.toNativeUtf16().cast<ffi.WChar>(),
+        decoder2.toNativeUtf16().cast<ffi.WChar>(),
+        wave.toNativeUtf16().cast<ffi.WChar>(),
+        (ssl != null) ? ssl.toNativeUtf16().cast<ffi.WChar>():ffi.nullptr,
+        modelType,
+        ailia_voice_dart.AILIA_VOICE_CLEANER_TYPE_BASIC,
+      );
+    }else{
+      status = ailiaVoice.ailiaVoiceOpenModelFileA(
+        ppAilia!.value,
+        encoder.toNativeUtf8().cast<ffi.Char>(),
+        decoder1.toNativeUtf8().cast<ffi.Char>(),
+        decoder2.toNativeUtf8().cast<ffi.Char>(),
+        wave.toNativeUtf8().cast<ffi.Char>(),
+        (ssl != null) ? ssl.toNativeUtf8().cast<ffi.Char>():ffi.nullptr,
+        modelType,
+        ailia_voice_dart.AILIA_VOICE_CLEANER_TYPE_BASIC,
+      );
+    }
+    throwError("ailiaVoiceOpenModelFile", status);
 
     malloc.free(callback);
 
-    print("ailia Voice initialize success");
+    if (debug){
+      print("ailia Voice initialize success");
+    }
 
     available = true;
     _modelType = modelType;
   }
 
   void close() {
+    if (!available){
+      return;
+    }
+
     ffi.Pointer<ailia_voice_dart.AILIAVoice> net = ppAilia!.value;
     ailiaVoice.ailiaVoiceDestroy(net);
     malloc.free(ppAilia!);

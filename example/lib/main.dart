@@ -83,6 +83,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
     _ailiaVoiceDownloadModel();
   }
 
@@ -92,44 +93,44 @@ class _MyAppState extends State<MyApp> {
 
   void _ailiaVoiceDownloadModel() {
     modelList.add("open_jtalk");
-    modelList.add("char.bin");
+    modelList.add("open_jtalk_dic_utf_8-1.11/char.bin");
 
     modelList.add("open_jtalk");
-    modelList.add("COPYING");
+    modelList.add("open_jtalk_dic_utf_8-1.11/COPYING");
 
     modelList.add("open_jtalk");
-    modelList.add("left-id.def");
+    modelList.add("open_jtalk_dic_utf_8-1.11/left-id.def");
 
     modelList.add("open_jtalk");
-    modelList.add("matrix.bin");
+    modelList.add("open_jtalk_dic_utf_8-1.11/matrix.bin");
 
     modelList.add("open_jtalk");
-    modelList.add("pos-id.def");
+    modelList.add("open_jtalk_dic_utf_8-1.11/pos-id.def");
 
     modelList.add("open_jtalk");
-    modelList.add("rewrite.def");
+    modelList.add("open_jtalk_dic_utf_8-1.11/rewrite.def");
 
     modelList.add("open_jtalk");
-    modelList.add("right-id.def");
+    modelList.add("open_jtalk_dic_utf_8-1.11/right-id.def");
 
     modelList.add("open_jtalk");
-    modelList.add("sys.dic");
+    modelList.add("open_jtalk_dic_utf_8-1.11/sys.dic");
 
     modelList.add("open_jtalk");
-    modelList.add("unk.dic");
+    modelList.add("open_jtalk_dic_utf_8-1.11/unk.dic");
 
     if (modelType == AILIA_VOICE_MODEL_TYPE_TACOTRON2){
       modelList.add("tacotron2");
-      modelList.add("nivdia_encoder.onnx");
+      modelList.add("encoder.onnx");
 
       modelList.add("tacotron2");
-      modelList.add("nivdia_decoder_iter.onnx");
+      modelList.add("decoder_iter.onnx");
 
       modelList.add("tacotron2");
-      modelList.add("nivdia_postnet.onnx");
+      modelList.add("postnet.onnx");
 
       modelList.add("tacotron2");
-      modelList.add("nivdia_waveglow.onnx");
+      modelList.add("waveglow.onnx");
     }
 
     if (modelType == AILIA_VOICE_MODEL_TYPE_GPT_SOVITS){
@@ -153,9 +154,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _ailiaVoiceDownloadModelOne(){
+    String url = "https://storage.googleapis.com/ailia-models/${modelList[_downloadCnt + 0]}/${modelList[_downloadCnt + 1]}";
+    print(url);
     downloadModel(
-        "https://storage.googleapis.com/ailia-models/${modelList[_downloadCnt*2 + 0]}/${modelList[_downloadCnt*2 + 1]}",
-        modelList[_downloadCnt], (file) {
+        url,
+        modelList[_downloadCnt + 1], (file) {
           _downloadCnt = _downloadCnt + 2;
           if (_downloadCnt >= modelList.length){
             _ailiaVoiceTest();
@@ -167,10 +170,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _ailiaVoiceTest() async {
+    // Check and download ailia SDK license
     await AiliaLicense.checkAndDownloadLicense();
 
-    // Load image
-
+    // Prepare model file
     String encoderFile = await ailiaCommonGetModelPath("encoder.onnx");
     String decoderFile = await ailiaCommonGetModelPath("decoder_iter.onnx");
     String postnetFile = await ailiaCommonGetModelPath("postnet.onnx");
@@ -185,8 +188,9 @@ class _MyAppState extends State<MyApp> {
       sslFile = await ailiaCommonGetModelPath("cnhubert.onnx");
     }
 
-    String dicFolder = await ailiaCommonGetModelPath("");
+    String dicFolder = await ailiaCommonGetModelPath("open_jtalk_dic_utf_8-1.11/");
 
+    // Open and Inference
     _ailiaVoiceModel.open(
       encoderFile,
       decoderFile,
@@ -214,9 +218,11 @@ class _MyAppState extends State<MyApp> {
         _ailiaVoiceModel.setReference(pcm, wav.samplesPerSecond, wav.channels.length, "水をマレーシアから買わなくてはならない。");
     }
 
+    // Get Audio and Play
     final audio = _ailiaVoiceModel.textToSpeech(targetText);
     _speaker.play(audio);
 
+    // Terminate
     _ailiaVoiceModel.close();
 
     print("Sueccess");
