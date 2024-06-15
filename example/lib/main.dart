@@ -83,59 +83,146 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _ailiaVoiceTest();
+    _ailiaVoiceDownloadModel();
+  }
+
+  int _downloadCnt = 0;
+  List<String> modelList = new List<String>.empty(growable: true);
+  int modelType = AILIA_VOICE_MODEL_TYPE_TACOTRON2;
+
+  void _ailiaVoiceDownloadModel() {
+    modelList.add("open_jtalk");
+    modelList.add("char.bin");
+
+    modelList.add("open_jtalk");
+    modelList.add("COPYING");
+
+    modelList.add("open_jtalk");
+    modelList.add("left-id.def");
+
+    modelList.add("open_jtalk");
+    modelList.add("matrix.bin");
+
+    modelList.add("open_jtalk");
+    modelList.add("pos-id.def");
+
+    modelList.add("open_jtalk");
+    modelList.add("rewrite.def");
+
+    modelList.add("open_jtalk");
+    modelList.add("right-id.def");
+
+    modelList.add("open_jtalk");
+    modelList.add("sys.dic");
+
+    modelList.add("open_jtalk");
+    modelList.add("unk.dic");
+
+    if (modelType == AILIA_VOICE_MODEL_TYPE_TACOTRON2){
+      modelList.add("tacotron2");
+      modelList.add("nivdia_encoder.onnx");
+
+      modelList.add("tacotron2");
+      modelList.add("nivdia_decoder_iter.onnx");
+
+      modelList.add("tacotron2");
+      modelList.add("nivdia_postnet.onnx");
+
+      modelList.add("tacotron2");
+      modelList.add("nivdia_waveglow.onnx");
+    }
+
+    if (modelType == AILIA_VOICE_MODEL_TYPE_GPT_SOVITS){
+      modelList.add("gpt-sovits");
+      modelList.add("t2s_encoder.onnx");
+
+      modelList.add("gpt-sovits");
+      modelList.add("t2s_fsdec.onnx");
+
+      modelList.add("gpt-sovits");
+      modelList.add("t2s_sdec.onnx");
+
+      modelList.add("gpt-sovits");
+      modelList.add("vits.onnx");
+
+      modelList.add("gpt-sovits");
+      modelList.add("cnhubert.onnx");
+    }
+
+    _ailiaVoiceDownloadModelOne();
+  }
+
+  void _ailiaVoiceDownloadModelOne(){
+    downloadModel(
+        "https://storage.googleapis.com/ailia-models/${modelList[_downloadCnt*2 + 0]}/${modelList[_downloadCnt*2 + 1]}",
+        modelList[_downloadCnt], (file) {
+          _downloadCnt = _downloadCnt + 2;
+          if (_downloadCnt >= modelList.length){
+            _ailiaVoiceTest();
+          }else{
+            _ailiaVoiceDownloadModelOne();
+          }
+        }
+    );
   }
 
   void _ailiaVoiceTest() async {
     await AiliaLicense.checkAndDownloadLicense();
 
     // Load image
-    ByteData data = await rootBundle.load("assets/demo.wav");
-    final wav = await Wav.read(data.buffer.asUint8List());
 
-    print("Downloading model...");
-    downloadModel(
-        "https://storage.googleapis.com/ailia-models/tacotron2/encoder.onnx",
-        "encoder.onnx", (encoderFile) {
-      downloadModel(
-          "https://storage.googleapis.com/ailia-models/tacotron2/decoder_iter.onnx",
-          "decoder_iter.onnx", (decoderFile) {
-        print("Download model success");
-      downloadModel(
-          "https://storage.googleapis.com/ailia-models/tacotron2/postnet.onnx",
-          "postnet.onnx", (postnetFile) {
-        print("Download model success");
-      downloadModel(
-          "https://storage.googleapis.com/ailia-models/tacotron2/waveglow.onnx",
-          "waveglow.onnx", (waveglowFile) {
-        print("Download model success");
+    String encoderFile = await ailiaCommonGetModelPath("encoder.onnx");
+    String decoderFile = await ailiaCommonGetModelPath("decoder_iter.onnx");
+    String postnetFile = await ailiaCommonGetModelPath("postnet.onnx");
+    String waveglowFile = await ailiaCommonGetModelPath("waveglow.onnx");
+    String? sslFile;
 
+    if (modelType == AILIA_VOICE_MODEL_TYPE_GPT_SOVITS){
+      encoderFile = await ailiaCommonGetModelPath("t2s_encoder.onnx");
+      decoderFile = await ailiaCommonGetModelPath("t2s_fsdec.onnx");
+      postnetFile = await ailiaCommonGetModelPath("t2s_sdec.onnx");
+      waveglowFile = await ailiaCommonGetModelPath("vits.onnx");
+      sslFile = await ailiaCommonGetModelPath("cnhubert.onnx");
+    }
 
-    final dicFolder ="";// await ailiaCommonCopyFolderFromAssets("open_jtalk_dic_utf_8-1.11");
+    String dicFolder = await ailiaCommonGetModelPath("");
 
     _ailiaVoiceModel.open(
       encoderFile,
       decoderFile,
       postnetFile,
       waveglowFile,
+      sslFile,
       dicFolder,
+      modelType
     );
+
     String targetText = "Hello world.";
 
-          final audio = _ailiaVoiceModel.textToSpeech(targetText);
-      _speaker.play(audio);
+    if (modelType == AILIA_VOICE_MODEL_TYPE_GPT_SOVITS){
+      ByteData data = await rootBundle.load("assets/reference_audio_girl.wav");
+      final wav = await Wav.read(data.buffer.asUint8List());
 
-        _ailiaVoiceModel.close();
+        List<double> pcm = List<double>.empty(growable: true);
 
-        print("Sueccess");
+        for (int i = 0; i < wav.channels[0].length; ++i) {
+          for (int j = 0; j < wav.channels.length; ++j){
+            pcm.add(wav.channels[j][i]);
+          }
+        }
 
-        setState(() {
-          _predictText = "finish";
-        });
-      });
-      });
-      });
+        _ailiaVoiceModel.setReference(pcm, wav.samplesPerSecond, wav.channels.length, "水をマレーシアから買わなくてはならない。");
+    }
 
+    final audio = _ailiaVoiceModel.textToSpeech(targetText);
+    _speaker.play(audio);
+
+    _ailiaVoiceModel.close();
+
+    print("Sueccess");
+
+    setState(() {
+      _predictText = "finish";
     });
   }
 
