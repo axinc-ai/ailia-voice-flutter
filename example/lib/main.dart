@@ -39,19 +39,17 @@ class _MyAppState extends State<MyApp> {
     _ailiaVoiceDownloadModelOne();
   }
 
-  void _ailiaVoiceDownloadModelOne(){
-    String url = "https://storage.googleapis.com/ailia-models/${modelList[_downloadCnt + 0]}/${modelList[_downloadCnt + 1]}";
-    downloadModel(
-        url,
-        modelList[_downloadCnt + 1], (file) {
-          _downloadCnt = _downloadCnt + 2;
-          if (_downloadCnt >= modelList.length){
-            _ailiaVoiceTest();
-          }else{
-            _ailiaVoiceDownloadModelOne();
-          }
-        }
-    );
+  void _ailiaVoiceDownloadModelOne() {
+    String url =
+        "https://storage.googleapis.com/ailia-models/${modelList[_downloadCnt + 0]}/${modelList[_downloadCnt + 1]}";
+    downloadModel(url, modelList[_downloadCnt + 1], (file) {
+      _downloadCnt = _downloadCnt + 2;
+      if (_downloadCnt >= modelList.length) {
+        _ailiaVoiceTest();
+      } else {
+        _ailiaVoiceDownloadModelOne();
+      }
+    });
   }
 
   void _ailiaVoiceTest() async {
@@ -65,10 +63,10 @@ class _MyAppState extends State<MyApp> {
     String waveglowFile = await getModelPath("waveglow.onnx");
     String? sslFile;
 
-    if (modelType == ailia_voice_dart.AILIA_VOICE_MODEL_TYPE_GPT_SOVITS){
+    if (modelType == ailia_voice_dart.AILIA_VOICE_MODEL_TYPE_GPT_SOVITS) {
       encoderFile = await getModelPath("t2s_encoder.onnx");
       decoderFile = await getModelPath("t2s_fsdec.onnx");
-      postnetFile = await getModelPath("t2s_sdec.onnx");
+      postnetFile = await getModelPath("t2s_sdec.opt.onnx");
       waveglowFile = await getModelPath("vits.onnx");
       sslFile = await getModelPath("cnhubert.onnx");
     }
@@ -76,7 +74,8 @@ class _MyAppState extends State<MyApp> {
     String dicFolder = await getModelPath("open_jtalk_dic_utf_8-1.11/");
     String targetText = "Hello world.";
     String outputPath = await getModelPath("temp.wav");
-    await _textToSpeech.inference(targetText, outputPath, encoderFile, decoderFile, postnetFile, waveglowFile, sslFile, dicFolder, modelType);
+    await _textToSpeech.inference(targetText, outputPath, encoderFile,
+        decoderFile, postnetFile, waveglowFile, sslFile, dicFolder, modelType);
 
     setState(() {
       _predictText = "finish";
