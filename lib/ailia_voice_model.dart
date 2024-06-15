@@ -430,7 +430,7 @@ class AiliaVoiceModel {
         malloc<ffi.Float>(samples.value * channels.value);
 
     int sizeofFloat = 4;
-    status = ailiaVoice.ailiaVoiceGetWaves(
+    status = ailiaVoice.ailiaVoiceGetWave(
       ppAilia!.value,
       buf,
       samples.value * channels.value * sizeofFloat,
