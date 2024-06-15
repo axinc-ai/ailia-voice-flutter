@@ -1,6 +1,6 @@
 ﻿name: 'ailiaVoiceFFI'
 description: 'Written for the FFI article'
-output: 'lib/ffi/ailia_voice.dart'
+output: 'lib/ailia_voice.dart'
 headers:
   entry-points:
     - 'native/ailia_voice.h'
