@@ -75,8 +75,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _predictText = 'Unknown';
-  //final _ailiaVoicePlugin = AiliaVoice();
+  String _predictText = 'Model Downloading...';
   final _ailiaVoiceModel = AiliaVoiceModel();
   final _speaker = Speaker();
 
@@ -225,7 +224,7 @@ class _MyAppState extends State<MyApp> {
     // Terminate
     _ailiaVoiceModel.close();
 
-    print("Sueccess");
+    print("Success");
 
     setState(() {
       _predictText = "finish";
@@ -237,7 +236,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('ailia Voice Sample'),
         ),
         body: Center(
           child: Text('Running on: $_predictText\n'),
