@@ -231,8 +231,13 @@ class AiliaVoiceModel {
     String wave,
     String? ssl,
     String dicFolder,
-    int modelType
+    int modelType,
+    int cleanerType,
+    int dictionaryType,
+    int envId,
   ) {
+    close();
+
     ailiaVoice = ailia_voice_dart.ailiaVoiceFFI(
       _ailiaCommonGetLibrary(_ailiaCommonGetVoicePath()),
     );
@@ -251,7 +256,7 @@ class AiliaVoiceModel {
 
     int status = ailiaVoice.ailiaVoiceCreate(
       ppAilia,
-      ailia_voice_dart.AILIA_ENVIRONMENT_ID_AUTO,
+      envId,
       ailia_voice_dart.AILIA_MULTITHREAD_AUTO,
       memoryMode,
       flag,
@@ -264,13 +269,13 @@ class AiliaVoiceModel {
       status = ailiaVoice.ailiaVoiceOpenDictionaryFileW(
         ppAilia!.value,
         dicFolder.toNativeUtf16().cast<ffi.WChar>(),
-        ailia_voice_dart.AILIA_VOICE_DICTIONARY_TYPE_OPEN_JTALK,
+        dictionaryType,
       );
     }else{
       status = ailiaVoice.ailiaVoiceOpenDictionaryFileA(
         ppAilia!.value,
         dicFolder.toNativeUtf8().cast<ffi.Char>(),
-        ailia_voice_dart.AILIA_VOICE_DICTIONARY_TYPE_OPEN_JTALK,
+        dictionaryType,
       );
     }
     throwError("ailiaVoiceOpenDictionaryFile", status);
@@ -284,7 +289,7 @@ class AiliaVoiceModel {
         wave.toNativeUtf16().cast<ffi.WChar>(),
         (ssl != null) ? ssl.toNativeUtf16().cast<ffi.WChar>():ffi.nullptr,
         modelType,
-        ailia_voice_dart.AILIA_VOICE_CLEANER_TYPE_BASIC,
+        cleanerType,
       );
     }else{
       status = ailiaVoice.ailiaVoiceOpenModelFileA(
