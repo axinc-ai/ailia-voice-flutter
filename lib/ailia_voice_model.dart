@@ -73,7 +73,6 @@ class AiliaVoiceModel {
   ffi.Pointer<ffi.Pointer<ailia_voice_dart.AILIAVoice>>? ppAilia;
   bool available = false;
   bool debug = false;
-  int _modelType = 0;
 
   void throwError(String funcName, int code) {
     if (code != ailia_voice_dart.AILIA_STATUS_SUCCESS) {
@@ -308,7 +307,6 @@ class AiliaVoiceModel {
     }
 
     available = true;
-    _modelType = modelType;
   }
 
   void close() {
@@ -324,7 +322,7 @@ class AiliaVoiceModel {
   }
 
   // G2Pの実行
-  String _g2p(String inputText){
+  String g2p(String inputText, int postProcess){
     if (debug){
       print("ailiaVoiceGraphemeToPhoeneme $inputText");
     }
@@ -337,10 +335,6 @@ class AiliaVoiceModel {
     throwError("ailiaVoiceGraphemeToPhoeneme", status);
 
     final ffi.Pointer<ffi.UnsignedInt> len = malloc<ffi.UnsignedInt>();
-    int postProcess = 0;
-    if (_modelType == ailia_voice_dart.AILIA_VOICE_MODEL_TYPE_GPT_SOVITS){
-      postProcess = ailia_voice_dart.AILIA_VOICE_TEXT_POST_PROCESS_APPEND_PUNCTUATION;
-    }
     status = ailiaVoice.ailiaVoiceGetFeatureLength(ppAilia!.value, len, postProcess);
     throwError("ailiaVoiceGetFeatureLength", status);
     if (debug){
@@ -357,7 +351,9 @@ class AiliaVoiceModel {
 
     ffi.Pointer<Utf8> p = features.cast<Utf8>();
     String s = p.toDartString();
-    print("g2p output $s");
+    if (debug){
+      print("g2p output $s");
+    }
 
     malloc.free(len);
     malloc.free(features);
@@ -366,7 +362,7 @@ class AiliaVoiceModel {
   }
 
   // リファレンスとなる音声を登録
-  void setReference(List<double> pcm, int sampleRate, int nChannels, String referenceText){
+  void setReference(List<double> pcm, int sampleRate, int nChannels, String referenceFeature){
     if (!available) {
       throw Exception("Model not opened yet. wait one second and try again.");
     }
@@ -376,8 +372,6 @@ class AiliaVoiceModel {
       waveBuf[i] = pcm[i];
     }
 
-    String features = _g2p(referenceText);
-
     int status = 0;
     int pushSamples = pcm.length;
     status = ailiaVoice.ailiaVoiceSetReference(
@@ -386,14 +380,14 @@ class AiliaVoiceModel {
       nChannels,
       pushSamples ~/ nChannels,
       sampleRate,
-      features.toNativeUtf8().cast<ffi.Char>()
+      referenceFeature.toNativeUtf8().cast<ffi.Char>()
     );
     throwError("ailiaVoiceSetReference", status);
 
     malloc.free(waveBuf);
   }
 
-  AiliaTextToSpeechResult textToSpeech(String inputText) {
+  AiliaTextToSpeechResult textToSpeech(String inputFeature) {
     AiliaTextToSpeechResult result = AiliaTextToSpeechResult(
       sampleRate: 0,
       nChannels: 0,
@@ -405,13 +399,11 @@ class AiliaVoiceModel {
       return result;
     }
 
-    String features = _g2p(inputText);
-
     if (debug){
       print("ailiaVoiceInference");
     }
 
-    int status = ailiaVoice.ailiaVoiceInference(ppAilia!.value, features.toNativeUtf8().cast<ffi.Char>());
+    int status = ailiaVoice.ailiaVoiceInference(ppAilia!.value, inputFeature.toNativeUtf8().cast<ffi.Char>());
     throwError("ailiaVoiceInference", status);
 
     if (debug){

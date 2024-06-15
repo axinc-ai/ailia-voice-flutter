@@ -214,11 +214,16 @@ class _MyAppState extends State<MyApp> {
           }
         }
 
-        _ailiaVoiceModel.setReference(pcm, wav.samplesPerSecond, wav.channels.length, "水をマレーシアから買わなくてはならない。");
+        String referenceFeature = _ailiaVoiceModel.g2p("水をマレーシアから買わなくてはならない。", AILIA_VOICE_TEXT_POST_PROCESS_APPEND_PUNCTUATION);
+        _ailiaVoiceModel.setReference(pcm, wav.samplesPerSecond, wav.channels.length, referenceFeature);
     }
 
     // Get Audio and Play
-    final audio = _ailiaVoiceModel.textToSpeech(targetText);
+    String targetFeature = targetText;
+    if (modelType == AILIA_VOICE_MODEL_TYPE_GPT_SOVITS){
+      targetFeature = _ailiaVoiceModel.g2p(targetText, AILIA_VOICE_TEXT_POST_PROCESS_APPEND_PUNCTUATION);
+    }
+    final audio = _ailiaVoiceModel.textToSpeech(targetFeature);
     _speaker.play(audio);
 
     // Terminate
