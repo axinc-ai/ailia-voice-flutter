@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'dart:typed_data';
 
 class Speaker {
-  void play(AiliaTextToSpeechResult audio, String outputPath) async {
+  void play(AiliaVoiceResult audio, String outputPath) async {
     Float64List channel = Float64List(audio.pcm.length);
     for (int i = 0; i < channel.length; i++) {
       channel[i] = audio.pcm[i];
@@ -94,7 +94,7 @@ class TextToSpeech {
     return modelList;
   }
 
-  Future<void> speak(String targetText, String outputPath, String encoderFile, String decoderFile, String postnetFile, String waveglowFile, String ?sslFile, String dicFolder, int modelType) async{
+  Future<void> inference(String targetText, String outputPath, String encoderFile, String decoderFile, String postnetFile, String waveglowFile, String ?sslFile, String dicFolder, int modelType) async{
     // Open and Inference
     _ailiaVoiceModel.open(
       encoderFile,
@@ -130,7 +130,7 @@ class TextToSpeech {
     if (modelType == ailia_voice_dart.AILIA_VOICE_MODEL_TYPE_GPT_SOVITS){
       targetFeature = _ailiaVoiceModel.g2p(targetText, ailia_voice_dart.AILIA_VOICE_TEXT_POST_PROCESS_APPEND_PUNCTUATION);
     }
-    final audio = _ailiaVoiceModel.textToSpeech(targetFeature);
+    final audio = _ailiaVoiceModel.inference(targetFeature);
     _speaker.play(audio, outputPath);
 
     // Terminate

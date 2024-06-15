@@ -54,12 +54,12 @@ ffi.DynamicLibrary _ailiaCommonGetLibrary(String path) {
   return library;
 }
 
-class AiliaTextToSpeechResult {
+class AiliaVoiceResult {
   final int sampleRate;
   final int nChannels;
   final List<double> pcm;
 
-  AiliaTextToSpeechResult({
+  AiliaVoiceResult({
     required this.sampleRate,
     required this.nChannels,
     required this.pcm,
@@ -72,7 +72,7 @@ class AiliaVoiceModel {
   dynamic ailiaVoice;
   ffi.Pointer<ffi.Pointer<ailia_voice_dart.AILIAVoice>>? ppAilia;
   bool available = false;
-  bool debug = false;
+  bool debug = true;
 
   void throwError(String funcName, int code) {
     if (code != ailia_voice_dart.AILIA_STATUS_SUCCESS) {
@@ -314,6 +314,7 @@ class AiliaVoiceModel {
     available = true;
   }
 
+  // モデルを閉じる
   void close() {
     if (!available){
       return;
@@ -332,15 +333,15 @@ class AiliaVoiceModel {
       print("ailiaVoiceGraphemeToPhoeneme $inputText");
     }
 
-    int status = ailiaVoice.ailiaVoiceGraphemeToPhoeneme(
+    int status = ailiaVoice.ailiaVoiceGraphemeToPhoneme(
       ppAilia!.value,
       inputText.toNativeUtf8().cast<ffi.Char>(),
-      ailia_voice_dart.AILIA_VOICE_TEXT_POST_PROCESS_APPEND_ACCENT,
+      postProcess,
     );
-    throwError("ailiaVoiceGraphemeToPhoeneme", status);
+    throwError("ailiaVoiceGraphemeToPhoneme", status);
 
     final ffi.Pointer<ffi.UnsignedInt> len = malloc<ffi.UnsignedInt>();
-    status = ailiaVoice.ailiaVoiceGetFeatureLength(ppAilia!.value, len, postProcess);
+    status = ailiaVoice.ailiaVoiceGetFeatureLength(ppAilia!.value, len);
     throwError("ailiaVoiceGetFeatureLength", status);
     if (debug){
       print("length ${len.value}");
@@ -377,13 +378,11 @@ class AiliaVoiceModel {
       waveBuf[i] = pcm[i];
     }
 
-    int status = 0;
-    int pushSamples = pcm.length;
-    status = ailiaVoice.ailiaVoiceSetReference(
+    int status = ailiaVoice.ailiaVoiceSetReference(
       ppAilia!.value,
       waveBuf,
+      pcm.length * 4,
       nChannels,
-      pushSamples ~/ nChannels,
       sampleRate,
       referenceFeature.toNativeUtf8().cast<ffi.Char>()
     );
@@ -392,8 +391,9 @@ class AiliaVoiceModel {
     malloc.free(waveBuf);
   }
 
-  AiliaTextToSpeechResult textToSpeech(String inputFeature) {
-    AiliaTextToSpeechResult result = AiliaTextToSpeechResult(
+  // 音声合成の実行
+  AiliaVoiceResult inference(String inputFeature) {
+    AiliaVoiceResult result = AiliaVoiceResult(
       sampleRate: 0,
       nChannels: 0,
       pcm: List<double>.empty(),
@@ -447,7 +447,7 @@ class AiliaVoiceModel {
       pcm.add(buf[i]);
     }
 
-    AiliaTextToSpeechResult resultPcm = AiliaTextToSpeechResult(
+    AiliaVoiceResult resultPcm = AiliaVoiceResult(
       sampleRate: samplingRate.value,
       nChannels: channels.value,
       pcm: pcm,

@@ -76,7 +76,7 @@ class _MyAppState extends State<MyApp> {
     String dicFolder = await getModelPath("open_jtalk_dic_utf_8-1.11/");
     String targetText = "Hello world.";
     String outputPath = await getModelPath("temp.wav");
-    await _textToSpeech.speak(targetText, outputPath, encoderFile, decoderFile, postnetFile, waveglowFile, sslFile, dicFolder, modelType);
+    await _textToSpeech.inference(targetText, outputPath, encoderFile, decoderFile, postnetFile, waveglowFile, sslFile, dicFolder, modelType);
 
     setState(() {
       _predictText = "finish";
