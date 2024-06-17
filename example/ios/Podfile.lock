@@ -40,7 +40,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
 
 SPEC CHECKSUMS:
-  ailia: 37774b5dfd9d4f3f1210d24c4865d1ec60c129bf
+  ailia: dfd9d82d32f8858e00de4dfbbd215f055b9f1846
   ailia_audio: 5d473878c872e2adea458b313d87ec39fafe2939
   ailia_voice: e1e4de56e23fde371980c529efc2ec740655d479
   audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
