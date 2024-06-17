@@ -90,9 +90,9 @@ target_link_libraries(${TEST_RUNNER} PRIVATE gtest_main gmock)
 include(GoogleTest)
 gtest_discover_tests(${TEST_RUNNER})
 
-# Copy ailia library
-set(ailia_bundled_libraries
-  "x64/*.so"
+# Copy ailia voice library
+set(ailia_voice_bundled_libraries
+  "${CMAKE_CURRENT_SOURCE_DIR}/x64/libailia_voice.so"
   PARENT_SCOPE
 )
 

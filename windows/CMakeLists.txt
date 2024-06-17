@@ -94,9 +94,9 @@ add_custom_command(TARGET ${TEST_RUNNER} POST_BUILD
   "${FLUTTER_LIBRARY}" $<TARGET_FILE_DIR:${TEST_RUNNER}>
 )
 
-# Copy ailia library
-set(ailia_audio_bundled_libraries
-  "x64/*.dll"
+# Copy ailia voice library
+set(ailia_voice_bundled_libraries
+  "${CMAKE_CURRENT_SOURCE_DIR}/x64/ailia_voice.dll"
   PARENT_SCOPE
 )
 
