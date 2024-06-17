@@ -51,8 +51,9 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an
 # external build triggered from this build file.
+# Copy ailia voice library
 set(ailia_voice_bundled_libraries
-  ""
+  "${CMAKE_CURRENT_SOURCE_DIR}/x64/ailia_voice.dll"
   PARENT_SCOPE
 )
 
@@ -92,12 +93,6 @@ target_link_libraries(${TEST_RUNNER} PRIVATE gtest_main gmock)
 add_custom_command(TARGET ${TEST_RUNNER} POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
   "${FLUTTER_LIBRARY}" $<TARGET_FILE_DIR:${TEST_RUNNER}>
-)
-
-# Copy ailia voice library
-set(ailia_voice_bundled_libraries
-  "${CMAKE_CURRENT_SOURCE_DIR}/x64/ailia_voice.dll"
-  PARENT_SCOPE
 )
 
 # Enable automatic test discovery.

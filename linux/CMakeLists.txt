@@ -45,7 +45,7 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK)
 # This list could contain prebuilt libraries, or libraries created by an
 # external build triggered from this build file.
 set(ailia_voice_bundled_libraries
-  ""
+  "${CMAKE_CURRENT_SOURCE_DIR}/x64/libailia_voice.so"
   PARENT_SCOPE
 )
 
@@ -89,12 +89,6 @@ target_link_libraries(${TEST_RUNNER} PRIVATE gtest_main gmock)
 # Enable automatic test discovery.
 include(GoogleTest)
 gtest_discover_tests(${TEST_RUNNER})
-
-# Copy ailia voice library
-set(ailia_voice_bundled_libraries
-  "${CMAKE_CURRENT_SOURCE_DIR}/x64/libailia_voice.so"
-  PARENT_SCOPE
-)
 
 endif()  # CMake version check
 endif()  # include_${PROJECT_NAME}_tests
