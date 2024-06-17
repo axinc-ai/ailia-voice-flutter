@@ -41,8 +41,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   ailia: 37774b5dfd9d4f3f1210d24c4865d1ec60c129bf
-  ailia_audio: 6640642df6b80c6157aa012831e49b2628e048f1
-  ailia_voice: e85dbbf35881dee44d8975931ac4ed39f9c23d5c
+  ailia_audio: 5d473878c872e2adea458b313d87ec39fafe2939
+  ailia_voice: e1e4de56e23fde371980c529efc2ec740655d479
   audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: 13825b8a9334a850581300559b8839134b124670
