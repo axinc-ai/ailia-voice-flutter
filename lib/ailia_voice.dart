@@ -3627,7 +3627,7 @@ class ailiaVoiceFFI {
   /// @brief G2Pを行います。
   /// @param net ボイスオブジェクトポインタ
   /// @param text テキスト(UTF8)
-  /// @param text_post_process AILIA_VOICE_TEXT_POST_PROCESS_*
+  /// @param g2p_type AILIA_VOICE_G2P_TYPE_*
   /// @return
   /// 成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
   /// @details
@@ -3637,7 +3637,7 @@ class ailiaVoiceFFI {
   /// @brief Perform g2p
   /// @param net A Voice instance pointer
   /// @param text Text(UTF8)
-  /// @param text_post_process AILIA_VOICE_TEXT_POST_PROCESS_*
+  /// @param g2p_type AILIA_VOICE_G2P_TYPE_*
   /// @return
   /// If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
   /// @details
@@ -3645,12 +3645,12 @@ class ailiaVoiceFFI {
   int ailiaVoiceGraphemeToPhoneme(
     ffi.Pointer<AILIAVoice> net,
     ffi.Pointer<ffi.Char> utf8,
-    int post_process,
+    int g2p_type,
   ) {
     return _ailiaVoiceGraphemeToPhoneme(
       net,
       utf8,
-      post_process,
+      g2p_type,
     );
   }
 
@@ -3827,7 +3827,7 @@ class ailiaVoiceFFI {
   /// @return
   /// 成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
   /// @details
-  /// 認識した結果はailiaVoiceGetFeatures APIで取得します。
+  /// 音声合成した結果はailiaVoiceGetWave APIで取得します。
   ///
   /// \~english
   /// @brief Perform inference
@@ -4730,6 +4730,8 @@ const int AILIA_AUDIO_FILTFILT_PAD_CONSTANT = 3;
 
 const int AILIA_VOICE_DICTIONARY_TYPE_OPEN_JTALK = 0;
 
+const int AILIA_VOICE_DICTIONARY_TYPE_G2P_EN = 1;
+
 const int AILIA_VOICE_MODEL_TYPE_TACOTRON2 = 0;
 
 const int AILIA_VOICE_MODEL_TYPE_GPT_SOVITS = 1;
@@ -4740,12 +4742,10 @@ const int AILIA_VOICE_CLEANER_TYPE_ENGLISH = 1;
 
 const int AILIA_VOICE_FLAG_NONE = 0;
 
-const int AILIA_VOICE_TEXT_POST_PROCESS_NONE = 0;
+const int AILIA_VOICE_G2P_TYPE_GPT_SOVITS_EN = 1;
 
-const int AILIA_VOICE_TEXT_POST_PROCESS_REMOVE_SPACE = 1;
+const int AILIA_VOICE_G2P_TYPE_GPT_SOVITS_JA = 2;
 
 const int AILIA_VOICE_TEXT_POST_PROCESS_APPEND_PUNCTUATION = 2;
-
-const int AILIA_VOICE_TEXT_POST_PROCESS_APPEND_ACCENT = 4;
 
 const int AILIA_VOICE_API_CALLBACK_VERSION = 1;

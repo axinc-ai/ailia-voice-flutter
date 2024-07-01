@@ -224,16 +224,14 @@ class AiliaVoiceModel {
   }
 
   // モデルを開く
-  void open(
+  void openModel(
     String encoder,
     String decoder1,
     String decoder2,
     String wave,
     String? ssl,
-    String dicFolder,
     int modelType,
     int cleanerType,
-    int dictionaryType,
     int envId,
   ) {
     close();
@@ -264,21 +262,6 @@ class AiliaVoiceModel {
       ailia_voice_dart.AILIA_VOICE_API_CALLBACK_VERSION,
     );
     throwError("ailiaVoiceCreate", status);
-
-    if (Platform.isWindows){
-      status = ailiaVoice.ailiaVoiceOpenDictionaryFileW(
-        ppAilia!.value,
-        dicFolder.toNativeUtf16().cast<ffi.WChar>(),
-        dictionaryType,
-      );
-    }else{
-      status = ailiaVoice.ailiaVoiceOpenDictionaryFileA(
-        ppAilia!.value,
-        dicFolder.toNativeUtf8().cast<ffi.Char>(),
-        dictionaryType,
-      );
-    }
-    throwError("ailiaVoiceOpenDictionaryFile", status);
 
     if (Platform.isWindows){
       status = ailiaVoice.ailiaVoiceOpenModelFileW(
@@ -314,6 +297,45 @@ class AiliaVoiceModel {
     available = true;
   }
 
+  // 辞書を開く
+  void openDictionary(
+    String dicFolder,
+    int dictionaryType,
+  ) {
+    int status = 0;
+    if (Platform.isWindows){
+      status = ailiaVoice.ailiaVoiceOpenDictionaryFileW(
+        ppAilia!.value,
+        dicFolder.toNativeUtf16().cast<ffi.WChar>(),
+        dictionaryType,
+      );
+    }else{
+      status = ailiaVoice.ailiaVoiceOpenDictionaryFileA(
+        ppAilia!.value,
+        dicFolder.toNativeUtf8().cast<ffi.Char>(),
+        dictionaryType,
+      );
+    }
+    throwError("ailiaVoiceOpenDictionaryFile", status);
+  }
+
+  // モデルと辞書を開く（互換性用）
+  void open(
+    String encoder,
+    String decoder1,
+    String decoder2,
+    String wave,
+    String? ssl,
+    String dicFolder,
+    int modelType,
+    int cleanerType,
+    int dictionaryType,
+    int envId,
+  ) {
+    openModel(encoder, decoder1, decoder2, wave, ssl, modelType, cleanerType, envId);
+    openDictionary(dicFolder, dictionaryType);
+  }
+
   // モデルを閉じる
   void close() {
     if (!available){
@@ -328,7 +350,7 @@ class AiliaVoiceModel {
   }
 
   // G2Pの実行
-  String g2p(String inputText, int postProcess){
+  String g2p(String inputText, int g2pType){
     if (debug){
       print("ailiaVoiceGraphemeToPhoeneme $inputText");
     }
@@ -336,7 +358,7 @@ class AiliaVoiceModel {
     int status = ailiaVoice.ailiaVoiceGraphemeToPhoneme(
       ppAilia!.value,
       inputText.toNativeUtf8().cast<ffi.Char>(),
-      postProcess,
+      g2pType,
     );
     throwError("ailiaVoiceGraphemeToPhoneme", status);
 

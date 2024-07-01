@@ -31,8 +31,10 @@ class _MyAppState extends State<MyApp> {
 
   int _downloadCnt = 0;
   List<String> modelList = List<String>.empty(growable: true);
-  //int modelType = ailia_voice_dart.AILIA_VOICE_MODEL_TYPE_TACOTRON2;
-  int modelType = ailia_voice_dart.AILIA_VOICE_MODEL_TYPE_GPT_SOVITS;
+
+  //int modelType = TextToSpeech.MODEL_TYPE_TACOTRON2;
+  int modelType = TextToSpeech.MODEL_TYPE_GPT_SOVITS_JA;
+  //int modelType = TextToSpeech.MODEL_TYPE_GPT_SOVITS_EN;
 
   void _ailiaVoiceDownloadModel() {
     modelList = _textToSpeech.getModelList(modelType);
@@ -57,13 +59,20 @@ class _MyAppState extends State<MyApp> {
     await AiliaLicense.checkAndDownloadLicense();
 
     // Prepare model file
-    String encoderFile = await getModelPath("encoder.onnx");
-    String decoderFile = await getModelPath("decoder_iter.onnx");
-    String postnetFile = await getModelPath("postnet.onnx");
-    String waveglowFile = await getModelPath("waveglow.onnx");
+    String encoderFile = "";
+    String decoderFile = "";
+    String postnetFile = "";
+    String waveglowFile = "";
     String? sslFile;
 
-    if (modelType == ailia_voice_dart.AILIA_VOICE_MODEL_TYPE_GPT_SOVITS) {
+    if (modelType == TextToSpeech.MODEL_TYPE_TACOTRON2){
+      encoderFile = await getModelPath("encoder.onnx");
+      decoderFile = await getModelPath("decoder_iter.onnx");
+      postnetFile = await getModelPath("postnet.onnx");
+      waveglowFile = await getModelPath("waveglow.onnx");
+    }
+
+    if (modelType == TextToSpeech.MODEL_TYPE_GPT_SOVITS_JA || modelType == TextToSpeech.MODEL_TYPE_GPT_SOVITS_EN) {
       encoderFile = await getModelPath("t2s_encoder.onnx");
       decoderFile = await getModelPath("t2s_fsdec.onnx");
       postnetFile = await getModelPath("t2s_sdec.opt.onnx");
@@ -71,11 +80,20 @@ class _MyAppState extends State<MyApp> {
       sslFile = await getModelPath("cnhubert.onnx");
     }
 
-    String dicFolder = await getModelPath("open_jtalk_dic_utf_8-1.11/");
+    String? dicFolderOpenJtalk;
+    String? dicFolderG2PEn;
+    if (modelType == TextToSpeech.MODEL_TYPE_GPT_SOVITS_JA || modelType == TextToSpeech.MODEL_TYPE_GPT_SOVITS_EN) {
+      dicFolderOpenJtalk = await getModelPath("open_jtalk_dic_utf_8-1.11/");
+    }
+    if (modelType == TextToSpeech.MODEL_TYPE_GPT_SOVITS_EN){
+      dicFolderG2PEn = await getModelPath("/");
+    }
+
     String targetText = "Hello world.";
     String outputPath = await getModelPath("temp.wav");
+
     await _textToSpeech.inference(targetText, outputPath, encoderFile,
-        decoderFile, postnetFile, waveglowFile, sslFile, dicFolder, modelType);
+        decoderFile, postnetFile, waveglowFile, sslFile, dicFolderOpenJtalk, dicFolderG2PEn, modelType);
 
     setState(() {
       _predictText = "finish";
