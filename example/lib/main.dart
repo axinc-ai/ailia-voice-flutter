@@ -75,7 +75,7 @@ class _MyAppState extends State<MyApp> {
     if (modelType == TextToSpeech.MODEL_TYPE_GPT_SOVITS_JA || modelType == TextToSpeech.MODEL_TYPE_GPT_SOVITS_EN) {
       encoderFile = await getModelPath("t2s_encoder.onnx");
       decoderFile = await getModelPath("t2s_fsdec.onnx");
-      postnetFile = await getModelPath("t2s_sdec.opt.onnx");
+      postnetFile = await getModelPath("t2s_sdec.opt3.onnx");
       waveglowFile = await getModelPath("vits.onnx");
       sslFile = await getModelPath("cnhubert.onnx");
     }

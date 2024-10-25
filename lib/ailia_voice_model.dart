@@ -220,6 +220,15 @@ class AiliaVoiceModel {
               ffi.Pointer<ailia_voice_dart.AILIANetwork>,
             )>>('ailiaGetErrorDetail');
 
+    callback.ref.ailiaCopyBlobData = ailia!.lookup<
+        ffi.NativeFunction<
+            ffi.Int Function(
+              ffi.Pointer<ailia_voice_dart.AILIANetwork>,
+              ffi.UnsignedInt,
+              ffi.Pointer<ailia_voice_dart.AILIANetwork>,
+              ffi.UnsignedInt,
+            )>>('ailiaCopyBlobData');
+
     return callback;
   }
 
