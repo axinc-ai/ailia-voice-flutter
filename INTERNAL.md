@@ -16,7 +16,7 @@ Add #include <stddef.h> to ailia.h
 
 Please run below command for generation.
 
-export PATH=$PATH:/Users/kyakuno/flutter_x86_64_3221/bin
+export PATH=$PATH:/Users/kyakuno/flutter_arm64/bin
 dart run ffigen --config ffigen_ailia_voice.yaml
 
 Output is ailia_voice.dart

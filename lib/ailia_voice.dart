@@ -3357,7 +3357,7 @@ class ailiaVoiceFFI {
   /// @param env_id 計算に利用する推論実行環境のID( ailiaGetEnvironment() で取得)  \ref AILIA_ENVIRONMENT_ID_AUTO にした場合は自動で選択する
   /// @param num_thread スレッド数の上限(  \ref AILIA_MULTITHREAD_AUTO  にした場合は自動で設定)
   /// @param memory_mode メモリモード(AILIA_MEMORY_MODE_*)
-  /// @param flag AILIA_Voice_FLAG_*の論理和
+  /// @param flag AILIA_VOICE_FLAG_*の論理和
   /// @param api_callback ailiaのAPIへのコールバック
   /// @param version AILIA_VOICE_API_CALLBACK_VERSION
   /// @return
@@ -3371,7 +3371,7 @@ class ailiaVoiceFFI {
   /// @param env_id The ID of the inference backend used for computation (obtained by  ailiaGetEnvironment() ). It is selected automatically if  \ref AILIA_ENVIRONMENT_ID_AUTO  is specified.
   /// @param num_thread The upper limit on the number of threads (It is set automatically if  \ref AILIA_MULTITHREAD_AUTO
   /// @param memory_mode The memory mode (AILIA_MEMORY_MODE_*)
-  /// @param flag OR of AILIA_Voice_FLAG_*
+  /// @param flag OR of AILIA_VOICE_FLAG_*
   /// @param api_callback The callback for ailia API
   /// @param version AILIA_VOICE_API_CALLBACK_VERSION
   /// is specified.)
@@ -4349,6 +4349,8 @@ final class _AILIAVoiceApiCallback extends ffi.Struct {
       ailiaGetOutputBlobCount;
 
   external AILIA_VOICE_USER_API_AILIA_GET_ERROR_DETAIL ailiaGetErrorDetail;
+
+  external AILIA_VOICE_USER_API_AILIA_COPY_BLOB_DATA ailiaCopyBlobData;
 }
 
 typedef AILIA_VOICE_USER_API_AILIA_AUDIO_RESAMPLE = ffi.Pointer<
@@ -4480,19 +4482,31 @@ typedef AILIA_VOICE_USER_API_AILIA_GET_ERROR_DETAIL = ffi.Pointer<
     ffi.NativeFunction<AILIA_VOICE_USER_API_AILIA_GET_ERROR_DETAILFunction>>;
 typedef AILIA_VOICE_USER_API_AILIA_GET_ERROR_DETAILFunction
     = ffi.Pointer<ffi.Char> Function(ffi.Pointer<AILIANetwork>);
+typedef AILIA_VOICE_USER_API_AILIA_COPY_BLOB_DATA = ffi.Pointer<
+    ffi.NativeFunction<AILIA_VOICE_USER_API_AILIA_COPY_BLOB_DATAFunction>>;
+typedef AILIA_VOICE_USER_API_AILIA_COPY_BLOB_DATAFunction = ffi.Int Function(
+    ffi.Pointer<AILIANetwork> dst_net,
+    ffi.UnsignedInt dst_blob_idx,
+    ffi.Pointer<AILIANetwork> src_net,
+    ffi.UnsignedInt src_blob_idx);
+typedef DartAILIA_VOICE_USER_API_AILIA_COPY_BLOB_DATAFunction = int Function(
+    ffi.Pointer<AILIANetwork> dst_net,
+    int dst_blob_idx,
+    ffi.Pointer<AILIANetwork> src_net,
+    int src_blob_idx);
 
 /// ボイスオブジェクトのインスタンス
 final class AILIAVoice extends ffi.Opaque {}
 
 typedef AILIAVoiceApiCallback = _AILIAVoiceApiCallback;
 
-const int __has_safe_buffers = 0;
+const int __has_safe_buffers = 1;
 
-const int __DARWIN_ONLY_64_BIT_INO_T = 0;
+const int __DARWIN_ONLY_64_BIT_INO_T = 1;
 
 const int __DARWIN_ONLY_UNIX_CONFORMANCE = 1;
 
-const int __DARWIN_ONLY_VERS_1050 = 0;
+const int __DARWIN_ONLY_VERS_1050 = 1;
 
 const int __DARWIN_UNIX03 = 1;
 
@@ -4501,10 +4515,6 @@ const int __DARWIN_64_BIT_INO_T = 1;
 const int __DARWIN_VERS_1050 = 1;
 
 const int __DARWIN_NON_CANCELABLE = 0;
-
-const String __DARWIN_SUF_64_BIT_INO_T = '\$INODE64';
-
-const String __DARWIN_SUF_1050 = '\$1050';
 
 const String __DARWIN_SUF_EXTSN = '\$DARWIN_EXTSN';
 
@@ -4519,6 +4529,10 @@ const int __STDC_WANT_LIB_EXT1__ = 1;
 const int __DARWIN_NO_LONG_LONG = 0;
 
 const int _DARWIN_FEATURE_64_BIT_INODE = 1;
+
+const int _DARWIN_FEATURE_ONLY_64_BIT_INODE = 1;
+
+const int _DARWIN_FEATURE_ONLY_VERS_1050 = 1;
 
 const int _DARWIN_FEATURE_ONLY_UNIX_CONFORMANCE = 1;
 
@@ -4748,4 +4762,4 @@ const int AILIA_VOICE_G2P_TYPE_GPT_SOVITS_JA = 2;
 
 const int AILIA_VOICE_TEXT_POST_PROCESS_APPEND_PUNCTUATION = 2;
 
-const int AILIA_VOICE_API_CALLBACK_VERSION = 1;
+const int AILIA_VOICE_API_CALLBACK_VERSION = 2;

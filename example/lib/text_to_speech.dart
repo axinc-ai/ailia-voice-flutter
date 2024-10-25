@@ -111,7 +111,7 @@ class TextToSpeech {
       modelList.add("t2s_fsdec.onnx");
 
       modelList.add("gpt-sovits");
-      modelList.add("t2s_sdec.opt.onnx");
+      modelList.add("t2s_sdec.opt3.onnx");
 
       modelList.add("gpt-sovits");
       modelList.add("vits.onnx");
