@@ -3414,6 +3414,84 @@ class ailiaVoiceFFI {
           AILIAVoiceApiCallback, int)>();
 
   /// \~japanese
+  /// @brief ユーザ辞書を指定します。(MBSC)
+  /// @param net ネットワークオブジェクトポインタ
+  /// @param dictionary_path ユーザ辞書ファイルのパス名(MBSC)
+  /// @param dictionary_type AILIA_VOICE_DICTIONARY_TYPE_*
+  /// @return
+  /// 成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+  /// @details
+  /// ailiaVoiceOpenDictionaryFileAの前に呼び出す必要があります。
+  ///
+  /// \~english
+  /// @brief Set user dictionary into a network instance.
+  /// @param net A network instance pointer
+  /// @param dictionary_path The path name to the user dictionary file (MBSC)
+  /// @param dictionary_type AILIA_VOICE_DICTIONARY_TYPE_*
+  /// @return
+  /// If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+  /// @details
+  /// You need to call before ailiaVoiceOpenDictionaryFileA.
+  int ailiaVoiceSetUserDictionaryFileA(
+    ffi.Pointer<AILIAVoice> net,
+    ffi.Pointer<ffi.Char> dictionary_path,
+    int dictionary_type,
+  ) {
+    return _ailiaVoiceSetUserDictionaryFileA(
+      net,
+      dictionary_path,
+      dictionary_type,
+    );
+  }
+
+  late final _ailiaVoiceSetUserDictionaryFileAPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<AILIAVoice>, ffi.Pointer<ffi.Char>,
+              ffi.Int)>>('ailiaVoiceSetUserDictionaryFileA');
+  late final _ailiaVoiceSetUserDictionaryFileA =
+      _ailiaVoiceSetUserDictionaryFileAPtr.asFunction<
+          int Function(ffi.Pointer<AILIAVoice>, ffi.Pointer<ffi.Char>, int)>();
+
+  /// \~japanese
+  /// @brief ユーザ辞書を指定します。(UTF16)
+  /// @param net ネットワークオブジェクトポインタ
+  /// @param dictionary_path ユーザ辞書ファイルのパス名(UTF16)
+  /// @param dictionary_type AILIA_VOICE_DICTIONARY_TYPE_*
+  /// @return
+  /// 成功した場合は \ref AILIA_STATUS_SUCCESS 、そうでなければエラーコードを返す。
+  /// @details
+  /// ailiaVoiceOpenDictionaryFileWの前に呼び出す必要があります。
+  ///
+  /// \~english
+  /// @brief Set user dictionary into a network instance.
+  /// @param net A network instance pointer
+  /// @param dictionary_path The path name to the user dictionary file (UTF16)
+  /// @param dictionary_type AILIA_VOICE_DICTIONARY_TYPE_*
+  /// @return
+  /// If this function is successful, it returns  \ref AILIA_STATUS_SUCCESS , or an error code otherwise.
+  /// @details
+  /// You need to call before ailiaVoiceOpenDictionaryFileW.
+  int ailiaVoiceSetUserDictionaryFileW(
+    ffi.Pointer<AILIAVoice> net,
+    ffi.Pointer<ffi.WChar> dictionary_path,
+    int dictionary_type,
+  ) {
+    return _ailiaVoiceSetUserDictionaryFileW(
+      net,
+      dictionary_path,
+      dictionary_type,
+    );
+  }
+
+  late final _ailiaVoiceSetUserDictionaryFileWPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<AILIAVoice>, ffi.Pointer<ffi.WChar>,
+              ffi.Int)>>('ailiaVoiceSetUserDictionaryFileW');
+  late final _ailiaVoiceSetUserDictionaryFileW =
+      _ailiaVoiceSetUserDictionaryFileWPtr.asFunction<
+          int Function(ffi.Pointer<AILIAVoice>, ffi.Pointer<ffi.WChar>, int)>();
+
+  /// \~japanese
   /// @brief 辞書を指定します。(MBSC)
   /// @param net ネットワークオブジェクトポインタ
   /// @param dictionary_path 辞書フォルダのパス名(MBSC)
