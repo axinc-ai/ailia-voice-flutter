@@ -72,7 +72,7 @@ class AiliaVoiceModel {
   dynamic ailiaVoice;
   ffi.Pointer<ffi.Pointer<ailia_voice_dart.AILIAVoice>>? ppAilia;
   bool available = false;
-  bool debug = true;
+  bool debug = false;
 
   void throwError(String funcName, int code) {
     if (code != ailia_voice_dart.AILIA_STATUS_SUCCESS) {
@@ -304,6 +304,28 @@ class AiliaVoiceModel {
     }
 
     available = true;
+  }
+
+  // ユーザ辞書を設定する
+  void setUserDictionary(
+    String dicFile,
+    int dictionaryType,
+  ) {
+    int status = 0;
+    if (Platform.isWindows){
+      status = ailiaVoice.ailiaVoiceSetUserDictionaryFileW(
+        ppAilia!.value,
+        dicFile.toNativeUtf16().cast<ffi.WChar>(),
+        dictionaryType,
+      );
+    }else{
+      status = ailiaVoice.ailiaVoiceSetUserDictionaryFileA(
+        ppAilia!.value,
+        dicFile.toNativeUtf8().cast<ffi.Char>(),
+        dictionaryType,
+      );
+    }
+    throwError("ailiaVoiceSetUserDictionaryFile", status);
   }
 
   // 辞書を開く

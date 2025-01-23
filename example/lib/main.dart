@@ -21,6 +21,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _predictText = 'Model Downloading...';
   final _textToSpeech = TextToSpeech();
+  final bool _userDictionary = true;
 
   @override
   void initState() {
@@ -38,6 +39,10 @@ class _MyAppState extends State<MyApp> {
 
   void _ailiaVoiceDownloadModel() {
     modelList = _textToSpeech.getModelList(modelType);
+    if (_userDictionary){
+      modelList.add("open_jtalk");
+      modelList.add("userdic.dic");
+    }
     _ailiaVoiceDownloadModelOne();
   }
 
@@ -82,18 +87,25 @@ class _MyAppState extends State<MyApp> {
 
     String? dicFolderOpenJtalk;
     String? dicFolderG2PEn;
+    String? userDictPath;
     if (modelType == TextToSpeech.MODEL_TYPE_GPT_SOVITS_JA || modelType == TextToSpeech.MODEL_TYPE_GPT_SOVITS_EN) {
       dicFolderOpenJtalk = await getModelPath("open_jtalk_dic_utf_8-1.11/");
+      if (_userDictionary){
+        userDictPath = await getModelPath("userdic.dic");
+      }
     }
     if (modelType == TextToSpeech.MODEL_TYPE_GPT_SOVITS_EN){
       dicFolderG2PEn = await getModelPath("/");
     }
 
     String targetText = "Hello world.";
+    if (_userDictionary && modelType == TextToSpeech.MODEL_TYPE_GPT_SOVITS_JA){
+      targetText = "超電磁砲";
+    }
     String outputPath = await getModelPath("temp.wav");
 
     await _textToSpeech.inference(targetText, outputPath, encoderFile,
-        decoderFile, postnetFile, waveglowFile, sslFile, dicFolderOpenJtalk, dicFolderG2PEn, modelType);
+        decoderFile, postnetFile, waveglowFile, sslFile, dicFolderOpenJtalk, dicFolderG2PEn, userDictPath, modelType);
 
     setState(() {
       _predictText = "finish";

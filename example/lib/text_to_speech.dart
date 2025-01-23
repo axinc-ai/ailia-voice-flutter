@@ -133,6 +133,7 @@ class TextToSpeech {
       String? sslFile,
       String? dicFolderOpenJtalk,
       String? dicFolderG2PEn,
+      String? userDictPath,
       int modelType) async {
     // Open and Inference
     _ailiaVoiceModel.openModel(
@@ -144,6 +145,9 @@ class TextToSpeech {
         (modelType == MODEL_TYPE_TACOTRON2) ? ailia_voice_dart.AILIA_VOICE_MODEL_TYPE_TACOTRON2:ailia_voice_dart.AILIA_VOICE_MODEL_TYPE_GPT_SOVITS,
         ailia_voice_dart.AILIA_VOICE_CLEANER_TYPE_BASIC,
         ailia_voice_dart.AILIA_ENVIRONMENT_ID_AUTO);
+    if (userDictPath != null){
+      _ailiaVoiceModel.setUserDictionary(userDictPath, ailia_voice_dart.AILIA_VOICE_DICTIONARY_TYPE_OPEN_JTALK);
+    }
     if (dicFolderOpenJtalk != null){
       _ailiaVoiceModel.openDictionary(dicFolderOpenJtalk, ailia_voice_dart.AILIA_VOICE_DICTIONARY_TYPE_OPEN_JTALK);
     }
